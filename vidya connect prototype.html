@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidya Connect</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        /* Hide scrollbar for aesthetics */
+        ::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+        }
+        /* Custom animation for page transitions */
+        .page {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <!-- Main Application Container -->
+    <div id="app" class="min-h-screen">
+
+        <!-- Header: Visible on all dashboard pages -->
+        <header id="app-header" class="bg-white shadow-md p-4 flex justify-between items-center hidden sticky top-0 z-50">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-600">
+                    <i class="fas fa-book-reader mr-2"></i><span data-translate-key="app_name">Vidya Connect</span>
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="language-switcher" class="flex items-center space-x-2">
+                    <button onclick="changeLanguage('en')" class="px-2 py-1 text-sm rounded-md hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500">EN</button>
+                    <button onclick="changeLanguage('hi')" class="px-2 py-1 text-sm rounded-md hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500">HI</button>
+                    <button onclick="changeLanguage('pa')" class="px-2 py-1 text-sm rounded-md hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500">PA</button>
+                </div>
+                <div id="user-info" class="flex items-center space-x-2">
+                    <span id="user-name" class="font-medium"></span>
+                    <button id="logout-button" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                        <i class="fas fa-sign-out-alt mr-2"></i><span data-translate-key="logout">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <main id="main-content">
+            <!-- Landing Page -->
+            <div id="landing-page" class="page">
+                <div class="min-h-screen flex items-center justify-center bg-blue-50 p-4">
+                    <div class="container mx-auto flex flex-col md:flex-row items-center justify-between p-4 md:p-8 max-w-6xl">
+                        <!-- Left side: App Details -->
+                        <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
+                            <h1 class="text-4xl md:text-5xl font-bold text-blue-600 mb-4">
+                                <i class="fas fa-book-reader mr-2"></i> <span data-translate-key="app_name">Vidya Connect</span>
+                            </h1>
+                            <p class="text-lg md:text-xl text-slate-600 mb-8" data-translate-key="login_slogan">Empowering Rural Education</p>
+                            <div class="space-y-4 text-left inline-block bg-white/50 p-6 rounded-lg">
+                                <p class="flex items-center text-slate-700"><i class="fas fa-wifi text-green-500 w-6 mr-3"></i> Works offline for uninterrupted learning.</p>
+                                <p class="flex items-center text-slate-700"><i class="fas fa-language text-green-500 w-6 mr-3"></i> Interactive lessons in local languages.</p>
+                                <p class="flex items-center text-slate-700"><i class="fas fa-chalkboard-teacher text-green-500 w-6 mr-3"></i> Progress tracking for teachers and parents.</p>
+                            </div>
+                        </div>
+            
+                        <!-- Right side: Login/Register Box -->
+                        <div class="w-full sm:w-2/3 md:w-1/3">
+                            <div class="bg-white p-8 rounded-xl shadow-2xl text-center">
+                                <h2 class="text-2xl font-bold mb-6">Get Started</h2>
+                                <div class="space-y-4">
+                                     <button id="show-login-main-btn" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold text-lg" data-translate-key="login">Login</button>
+                                     <button id="show-register-main-btn" class="w-full bg-slate-200 text-slate-800 py-3 rounded-lg hover:bg-slate-300 transition duration-300 font-semibold text-lg" data-translate-key="register">Register</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Page -->
+            <div id="login-page" class="page max-w-md mx-auto mt-20 hidden">
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <h2 class="text-3xl font-bold text-blue-600 mb-2" data-translate-key="app_name">Vidya Connect</h2>
+                    <p class="text-slate-500 mb-6" data-translate-key="login_slogan">Empowering Rural Education</p>
+                    <form id="login-form">
+                        <div class="mb-4 text-left">
+                            <label for="login-email" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="email">Email</label>
+                            <input type="email" id="login-email" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div class="mb-6 text-left">
+                            <label for="login-password" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="password">Password</label>
+                            <input type="password" id="login-password" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold" data-translate-key="login">Login</button>
+                    </form>
+                    <p class="mt-6 text-sm">
+                        <span data-translate-key="no_account">Don't have an account?</span>
+                        <a href="#" id="show-register-link" class="text-blue-600 hover:underline font-medium" data-translate-key="register_now">Register Now</a>
+                    </p>
+                     <a href="#" class="back-to-landing text-slate-500 hover:underline text-sm mt-4 block">&larr; Back to Home</a>
+                </div>
+            </div>
+
+            <!-- Registration Page -->
+            <div id="register-page" class="page max-w-md mx-auto mt-10 hidden">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-center mb-6" data-translate-key="create_account">Create Your Account</h2>
+                    <form id="register-form">
+                        <div class="mb-4">
+                            <label for="register-name" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="full_name">Full Name</label>
+                            <input type="text" id="register-name" class="w-full px-4 py-2 border border-slate-300 rounded-lg" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-email" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="email">Email</label>
+                            <input type="email" id="register-email" class="w-full px-4 py-2 border border-slate-300 rounded-lg" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-password" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="password">Password</label>
+                            <input type="password" id="register-password" class="w-full px-4 py-2 border border-slate-300 rounded-lg" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-role" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="i_am_a">I am a...</label>
+                            <select id="register-role" class="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white">
+                                <option value="student" data-translate-key="student">Student</option>
+                                <option value="teacher" data-translate-key="teacher">Teacher (Admin)</option>
+                                <option value="parent" data-translate-key="parent">Parent</option>
+                            </select>
+                        </div>
+                        <div id="parent-options" class="mb-4 hidden">
+                             <label for="child-select" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="select_child">Select your child</label>
+                             <select id="child-select" class="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white">
+                                <!-- Student options will be populated here -->
+                             </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold" data-translate-key="register">Register</button>
+                    </form>
+                    <p class="mt-6 text-sm text-center">
+                        <span data-translate-key="already_account">Already have an account?</span>
+                        <a href="#" id="show-login-link" class="text-blue-600 hover:underline font-medium" data-translate-key="login_here">Login here</a>
+                    </p>
+                    <a href="#" class="back-to-landing text-slate-500 hover:underline text-sm mt-4 block text-center">&larr; Back to Home</a>
+                </div>
+            </div>
+
+            <!-- Admin (Teacher) Dashboard -->
+            <div id="teacher-dashboard" class="page hidden">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Sidebar/Nav -->
+                    <div class="md:col-span-1">
+                        <div class="bg-white p-4 rounded-xl shadow-md">
+                            <h3 class="text-lg font-bold mb-4" data-translate-key="navigation">Navigation</h3>
+                            <ul class="space-y-2">
+                                <li><a href="#" class="flex items-center p-2 rounded-lg text-slate-700 hover:bg-blue-50 teacher-nav-link active-nav" data-target="teacher-progress"><i class="fas fa-chart-line w-6 mr-2"></i><span data-translate-key="student_progress">Student Progress</span></a></li>
+                                <li><a href="#" class="flex items-center p-2 rounded-lg text-slate-700 hover:bg-blue-50 teacher-nav-link" data-target="teacher-modules"><i class="fas fa-book w-6 mr-2"></i><span data-translate-key="manage_modules">Manage Modules</span></a></li>
+                                <li><a href="#" class="flex items-center p-2 rounded-lg text-slate-700 hover:bg-blue-50 teacher-nav-link" data-target="teacher-communication"><i class="fas fa-comments w-6 mr-2"></i><span data-translate-key="parent_communication">Parent Communication</span></a></li>
+                                 <li><a href="#" class="flex items-center p-2 rounded-lg text-slate-700 hover:bg-blue-50 teacher-nav-link" data-target="teacher-doubts"><i class="fas fa-question-circle w-6 mr-2"></i><span data-translate-key="student_doubts">Student Doubts</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Main Content Area -->
+                    <div class="md:col-span-3">
+                        <!-- Student Progress View -->
+                        <div id="teacher-progress" class="teacher-view">
+                           <div class="bg-white p-6 rounded-xl shadow-md">
+                               <h2 class="text-2xl font-bold mb-4" data-translate-key="student_progress_report">Student Progress Report</h2>
+                               <div id="student-progress-list" class="space-y-4"></div>
+                           </div>
+                        </div>
+                        <!-- Module Management View -->
+                        <div id="teacher-modules" class="teacher-view hidden">
+                             <div class="bg-white p-6 rounded-xl shadow-md">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-2xl font-bold" data-translate-key="learning_modules">Learning Modules</h2>
+                                    <button id="add-module-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"><i class="fas fa-plus mr-2"></i><span data-translate-key="add_module">Add Module</span></button>
+                                </div>
+                                <div id="module-list" class="space-y-4"></div>
+                            </div>
+                        </div>
+                        <!-- Parent Communication View -->
+                        <div id="teacher-communication" class="teacher-view hidden">
+                           <div class="bg-white p-6 rounded-xl shadow-md">
+                                <h2 class="text-2xl font-bold mb-4" data-translate-key="send_message_parent">Send Message to Parent</h2>
+                                <form id="message-form" class="space-y-4">
+                                    <div>
+                                        <label for="parent-select" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="select_parent">Select Parent</label>
+                                        <select id="parent-select" class="w-full bg-white px-4 py-2 border rounded-lg"></select>
+                                    </div>
+                                    <div>
+                                        <label for="message-content" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="message">Message</label>
+                                        <textarea id="message-content" rows="4" class="w-full px-4 py-2 border rounded-lg" placeholder-key="type_message_here"></textarea>
+                                    </div>
+                                     <div>
+                                        <label for="gmeet-link" class="block text-sm font-medium text-slate-600 mb-1" data-translate-key="gmeet_link">Google Meet Link (Optional)</label>
+                                        <input type="url" id="gmeet-link" class="w-full px-4 py-2 border rounded-lg" placeholder-key="paste_gmeet_link">
+                                    </div>
+                                    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition" data-translate-key="send">Send</button>
+                                </form>
+                            </div>
+                        </div>
+                         <!-- Student Doubts View -->
+                        <div id="teacher-doubts" class="teacher-view hidden">
+                           <div class="bg-white p-6 rounded-xl shadow-md">
+                               <h2 class="text-2xl font-bold mb-4" data-translate-key="student_doubts">Student Doubts</h2>
+                               <div id="doubts-list" class="space-y-4"></div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Student Dashboard -->
+            <div id="student-dashboard" class="page hidden">
+                <div class="p-4 sm:p-6 md:p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold" data-translate-key="my_courses">My Courses</h2>
+                    </div>
+                    <div id="student-module-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Module cards will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Task View Page (for students) -->
+            <div id="task-view-page" class="page hidden max-w-4xl mx-auto">
+                 <div class="p-4 sm:p-6 md:p-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg">
+                        <button id="back-to-dashboard-btn" class="mb-6 bg-slate-200 text-slate-800 px-4 py-2 rounded-lg hover:bg-slate-300 transition">
+                            <i class="fas fa-arrow-left mr-2"></i><span data-translate-key="back_to_dashboard">Back to Dashboard</span>
+                        </button>
+                        <div id="task-content"></div>
+                    </div>
+                 </div>
+            </div>
+
+            <!-- Parent Dashboard -->
+            <div id="parent-dashboard" class="page hidden max-w-4xl mx-auto">
+                <div class="p-4 sm:p-6 md:p-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg">
+                        <h2 class="text-3xl font-bold mb-6">
+                            <span data-translate-key="child_progress_for">Child's Progress for:</span> <span id="child-name-display" class="text-blue-600"></span>
+                        </h2>
+
+                        <!-- Progress Summary -->
+                        <div class="mb-8">
+                            <h3 class="text-xl font-semibold mb-4 border-b pb-2" data-translate-key="progress_summary">Progress Summary</h3>
+                            <div id="parent-progress-summary" class="text-lg"></div>
+                        </div>
+
+                        <!-- Messages from Teacher -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 border-b pb-2" data-translate-key="teacher_messages">Messages from Teacher</h3>
+                            <div id="parent-message-list" class="space-y-4">
+                                <!-- Messages will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal for adding/editing modules -->
+    <div id="module-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-2xl max-h-screen overflow-y-auto">
+            <h2 id="modal-title" class="text-2xl font-bold mb-6" data-translate-key="add_new_module">Add New Module</h2>
+            <form id="module-form" class="space-y-4">
+                <input type="hidden" id="module-id">
+                <div>
+                    <label for="module-title" class="block text-sm font-medium" data-translate-key="module_title">Module Title</label>
+                    <input type="text" id="module-title" class="w-full mt-1 px-3 py-2 border rounded-lg" required>
+                </div>
+                <div>
+                    <label for="module-category" class="block text-sm font-medium" data-translate-key="category">Category</label>
+                    <input type="text" id="module-category" class="w-full mt-1 px-3 py-2 border rounded-lg" required>
+                </div>
+                <div>
+                    <label for="module-content-text" class="block text-sm font-medium" data-translate-key="content_text">Content Text</label>
+                    <textarea id="module-content-text" rows="5" class="w-full mt-1 px-3 py-2 border rounded-lg" required></textarea>
+                </div>
+                <div>
+                    <label for="module-video" class="block text-sm font-medium" data-translate-key="video_reference_url">Video Reference URL</label>
+                    <input type="url" id="module-video" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="https://youtube.com/watch?v=...">
+                </div>
+                <div>
+                    <label for="module-timer" class="block text-sm font-medium" data-translate-key="completion_timer_seconds">Completion Timer (seconds)</label>
+                    <input type="number" id="module-timer" class="w-full mt-1 px-3 py-2 border rounded-lg" required min="10">
+                </div>
+                 <div>
+                    <label for="module-deadline" class="block text-sm font-medium" data-translate-key="deadline">Deadline</label>
+                    <input type="date" id="module-deadline" class="w-full mt-1 px-3 py-2 border rounded-lg">
+                </div>
+                <hr>
+                <!-- Quiz Builder -->
+                <div id="quiz-builder">
+                    <h3 class="text-lg font-semibold" data-translate-key="quiz_section">Quiz Section</h3>
+                    <div id="questions-container" class="space-y-4 mt-2"></div>
+                    <button type="button" id="add-question-btn" class="mt-2 text-sm text-blue-600 hover:underline"><i class="fas fa-plus mr-1"></i><span data-translate-key="add_question">Add Question</span></button>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancel-module-btn" class="bg-slate-200 px-6 py-2 rounded-lg" data-translate-key="cancel">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg" data-translate-key="save_module">Save Module</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Custom Alert/Notification Modal -->
+    <div id="alert-modal" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden transition-transform duration-500 translate-x-full z-50">
+        <p id="alert-message"></p>
+    </div>
+
+
+<script>
+// Main Application Logic
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- STATE MANAGEMENT & DATABASE SIMULATION --- //
+    // Using localStorage to persist data, simulating a backend database.
+    // In a real application, this would be replaced with API calls to a server.
+    
+    let db = JSON.parse(localStorage.getItem('vidyaConnectDB')) || {};
+
+    function initializeDB() {
+        // Initialize with default structure and some dummy data if the DB is empty.
+        if (!db.users || db.users.length === 0) {
+            db = {
+                users: [
+                    { id: 1, name: 'Dr. Sharma', email: 'teacher@vidya.com', password: '123', role: 'teacher' },
+                    { id: 2, name: 'Rohan Kumar', email: 'rohan@vidya.com', password: '123', role: 'student' },
+                    { id: 3, name: 'Priya Singh', email: 'priya@vidya.com', password: '123', role: 'student' },
+                    { id: 4, name: 'Mr. Kumar (Rohan\'s Dad)', email: 'parent@vidya.com', password: '123', role: 'parent', childId: 2 }
+                ],
+                modules: [
+                    { 
+                        id: 1, 
+                        title: 'Introduction to Computers', 
+                        category: 'Digital Literacy',
+                        contentText: 'This module covers the basics of computer hardware, software, and operating systems. Learn how to use a mouse and keyboard effectively.',
+                        videoUrl: 'https://www.youtube.com/embed/p2nS0lTEc_s',
+                        timer: 60, // in seconds
+                        deadline: '2025-10-15',
+                        quiz: [
+                            { question: 'What does CPU stand for?', options: ['Central Processing Unit', 'Computer Personal Unit', 'Central Power Unit'], correctAnswer: 'Central Processing Unit' }
+                        ]
+                    },
+                    { 
+                        id: 2, 
+                        title: 'Basic Algebra', 
+                        category: 'Mathematics',
+                        contentText: 'Learn about variables, equations, and how to solve for x. This is a fundamental skill in mathematics.',
+                        videoUrl: 'https://www.youtube.com/embed/9g_a9i3a-9s',
+                        timer: 120,
+                        deadline: '2025-10-20',
+                        quiz: []
+                    }
+                ],
+                progress: [
+                     { studentId: 2, moduleId: 2, completedAt: new Date().toISOString(), score: null } // Dummy completion
+                ],
+                messages: [
+                    { teacherId: 1, parentId: 4, content: 'Rohan is doing well in class. Please ensure he completes the Digital Literacy module by the deadline.', gmeet: 'https://meet.google.com/xyz-abc-def', sentAt: new Date().toISOString() }
+                ],
+                doubts: [
+                    { id: 1, studentId: 2, moduleId: 1, question: 'I am having trouble understanding the difference between RAM and ROM. Can you please explain?', answer: null, askedAt: new Date().toISOString() }
+                ]
+            };
+            saveDB();
+        }
+    }
+
+    function saveDB() {
+        localStorage.setItem('vidyaConnectDB', JSON.stringify(db));
+    }
+
+    let currentUser = null;
+    let taskTimerInterval = null;
+
+    // --- TRANSLATION DATA --- //
+    const translations = {
+        en: {
+            app_name: "Vidya Connect", login_slogan: "Empowering Rural Education", email: "Email", password: "Password", login: "Login",
+            no_account: "Don't have an account?", register_now: "Register Now", create_account: "Create Your Account", full_name: "Full Name",
+            i_am_a: "I am a...", student: "Student", teacher: "Teacher (Admin)", parent: "Parent", select_child: "Select your child",
+            register: "Register", already_account: "Already have an account?", login_here: "Login here", navigation: "Navigation",
+            student_progress: "Student Progress", manage_modules: "Manage Modules", parent_communication: "Parent Communication",
+            student_doubts: "Student Doubts", student_progress_report: "Student Progress Report", learning_modules: "Learning Modules",
+            add_module: "Add Module", send_message_parent: "Send Message to Parent", select_parent: "Select Parent",
+            message: "Message", gmeet_link: "Google Meet Link (Optional)", send: "Send", my_courses: "My Courses",
+            back_to_dashboard: "Back to Dashboard", child_progress_for: "Child's Progress for:", progress_summary: "Progress Summary",
+            teacher_messages: "Messages from Teacher", add_new_module: "Add New Module", module_title: "Module Title",
+            category: "Category", content_text: "Content Text", video_reference_url: "Video Reference URL",
+            completion_timer_seconds: "Completion Timer (seconds)", deadline: "Deadline", quiz_section: "Quiz Section",
+            add_question: "Add Question", cancel: "Cancel", save_module: "Save Module", logout: "Logout",
+            start_task: "Start Task", task_completed: "Task Completed", download_module: "Download Module", ask_a_doubt: "Ask a Doubt",
+            type_your_question: "Type your question here...", submit_doubt: "Submit Doubt", mark_as_complete: "Mark as Complete",
+            module: "Module", status: "Status", completed_on: "Completed On", completed: "Completed", not_started: "Not Started",
+            type_message_here: "Type your message here...", paste_gmeet_link: "Paste a Google Meet link here...",
+            progress_details: "Progress Details", quiz_score: "Quiz Score",
+            doubt_answered: "Your doubt has been answered!", your_doubt: "Your Doubt:", teacher_response: "Teacher's Response:",
+        },
+        hi: {
+            app_name: "विद्या कनेक्ट", login_slogan: "ग्रामीण शिक्षा को सशक्त बनाना", email: "ईमेल", password: "पासवर्ड", login: "लॉग इन करें",
+            no_account: "खाता नहीं है?", register_now: "अभी पंजीकरण करें", create_account: "अपना खाता बनाएं", full_name: "पूरा नाम",
+            i_am_a: "मैं एक...", student: "छात्र", teacher: "शिक्षक (एडमिन)", parent: "अभिभावक", select_child: "अपने बच्चे का चयन करें",
+            register: "पंजीकरण करें", already_account: "पहले से ही एक खाता है?", login_here: "यहां लॉगिन करें", navigation: "नेविगेशन",
+            student_progress: "छात्र प्रगति", manage_modules: "मॉड्यूल प्रबंधित करें", parent_communication: "अभिभावक संचार",
+            student_doubts: "छात्र संदेह", student_progress_report: "छात्र प्रगति रिपोर्ट", learning_modules: "सीखने के मॉड्यूल",
+            add_module: "मॉड्यूल जोड़ें", send_message_parent: "अभिभावक को संदेश भेजें", select_parent: "अभिभावक चुनें",
+            message: "संदेश", gmeet_link: "गूगल मीट लिंक (वैकल्पिक)", send: "भेजें", my_courses: "मेरे पाठ्यक्रम",
+            back_to_dashboard: "डैशबोर्ड पर वापस जाएं", child_progress_for: "के लिए बच्चे की प्रगति:", progress_summary: "प्रगति सारांश",
+            teacher_messages: "शिक्षक के संदेश", add_new_module: "नया मॉड्यूल जोड़ें", module_title: "मॉड्यूल शीर्षक",
+            category: "श्रेणी", content_text: "सामग्री पाठ", video_reference_url: "वीडियो संदर्भ यूआरएल",
+            completion_timer_seconds: "पूरा होने का टाइमर (सेकंड)", deadline: "समय सीमा", quiz_section: "प्रश्नोत्तरी अनुभाग",
+            add_question: "प्रश्न जोड़ें", cancel: "रद्द करें", save_module: "मॉड्यूल सहेजें", logout: "लॉग आउट",
+            start_task: "कार्य प्रारंभ करें", task_completed: "कार्य पूरा हुआ", download_module: "मॉड्यूल डाउनलोड करें", ask_a_doubt: "एक संदेह पूछें",
+            type_your_question: "अपना प्रश्न यहाँ लिखें...", submit_doubt: "संदेह सबमिट करें", mark_as_complete: "पूर्ण के रूप में चिह्नित करें",
+            module: "मॉड्यूल", status: "स्थिति", completed_on: "को पूरा हुआ", completed: "पूरा हुआ", not_started: "शुरू नहीं हुआ",
+            type_message_here: "अपना संदेश यहाँ लिखें...", paste_gmeet_link: "यहां एक गूगल मीट लिंक पेस्ट करें...",
+            progress_details: "प्रगति विवरण", quiz_score: "प्रश्नोत्तरी स्कोर",
+            doubt_answered: "आपके संदेह का उत्तर दे दिया गया है!", your_doubt: "आपका संदेह:", teacher_response: "शिक्षक की प्रतिक्रिया:",
+        },
+        pa: {
+            app_name: "ਵਿਦਿਆ ਕਨੈਕਟ", login_slogan: "ਪੇਂਡੂ ਸਿੱਖਿਆ ਨੂੰ ਸ਼ਕਤੀਕਰਨ", email: "ਈ - ਮੇਲ", password: "ਪਾਸਵਰਡ", login: "ਲਾਗਿਨ ਕਰੋ",
+            no_account: "ਖਾਤਾ ਨਹੀਂ ਹੈ?", register_now: "ਹੁਣੇ ਰਜਿਸਟਰ ਕਰੋ", create_account: "ਆਪਣਾ ਖਾਤਾ ਬਣਾਓ", full_name: "ਪੂਰਾ ਨਾਂਮ",
+            i_am_a: "ਮੈਂ ਇੱਕ...", student: "ਵਿਦਿਆਰਥੀ", teacher: "ਅਧਿਆਪਕ (ਐਡਮਿਨ)", parent: "ਮਾਪੇ", select_child: "ਆਪਣੇ ਬੱਚੇ ਦੀ ਚੋਣ ਕਰੋ",
+            register: "ਰਜਿਸਟਰ ਕਰੋ", already_account: "ਪਹਿਲਾਂ ਤੋਂ ਹੀ ਖਾਤਾ ਹੈ?", login_here: "ਇੱਥੇ ਲਾਗਇਨ ਕਰੋ", navigation: "ਨੇਵੀਗੇਸ਼ਨ",
+            student_progress: "ਵਿਦਿਆਰਥੀ ਦੀ ਤਰੱਕੀ", manage_modules: "ਮੋਡੀਊਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ", parent_communication: "ਮਾਪਿਆਂ ਨਾਲ ਸੰਚਾਰ",
+            student_doubts: "ਵਿਦਿਆਰਥੀ ਸ਼ੰਕੇ", student_progress_report: "ਵਿਦਿਆਰਥੀ ਤਰੱਕੀ ਰਿਪੋਰਟ", learning_modules: "ਸਿੱਖਣ ਦੇ ਮੋਡੀਊਲ",
+            add_module: "ਮੋਡੀਊਲ ਸ਼ਾਮਲ ਕਰੋ", send_message_parent: "ਮਾਪਿਆਂ ਨੂੰ ਸੁਨੇਹਾ ਭੇਜੋ", select_parent: "ਮਾਪੇ ਚੁਣੋ",
+            message: "ਸੁਨੇਹਾ", gmeet_link: "ਗੂਗਲ ਮੀਟ ਲਿੰਕ (ਵਿਕਲਪਿਕ)", send: "ਭੇਜੋ", my_courses: "ਮੇਰੇ ਕੋਰਸ",
+            back_to_dashboard: "ਡੈਸ਼ਬੋਰਡ 'ਤੇ ਵਾਪਸ ਜਾਓ", child_progress_for: "ਲਈ ਬੱਚੇ ਦੀ ਤਰੱਕੀ:", progress_summary: "ਤਰੱਕੀ ਦਾ ਸਾਰ",
+            teacher_messages: "ਅਧਿਆਪਕ ਦੇ ਸੁਨੇਹੇ", add_new_module: "ਨਵਾਂ ਮੋਡੀਊਲ ਸ਼ਾਮਲ ਕਰੋ", module_title: "ਮੋਡੀਊਲ ਸਿਰਲੇਖ",
+            category: "ਸ਼੍ਰੇਣੀ", content_text: "ਸਮੱਗਰੀ ਪਾਠ", video_reference_url: "ਵੀਡੀਓ ਹਵਾਲਾ URL",
+            completion_timer_seconds: "ਪੂਰਾ ਹੋਣ ਦਾ ਟਾਈਮਰ (ਸਕਿੰਟ)", deadline: "ਆਖਰੀ ਮਿਤੀ", quiz_section: "ਕੁਇਜ਼ ਸੈਕਸ਼ਨ",
+            add_question: "ਸਵਾਲ ਸ਼ਾਮਲ ਕਰੋ", cancel: "ਰੱਦ ਕਰੋ", save_module: "ਮੋਡੀਊਲ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰੋ", logout: "ਲਾੱਗ ਆਊਟ",
+            start_task: "ਕੰਮ ਸ਼ੁਰੂ ਕਰੋ", task_completed: "ਕੰਮ ਪੂਰਾ ਹੋਇਆ", download_module: "ਮੋਡੀਊਲ ਡਾਊਨਲੋਡ ਕਰੋ", ask_a_doubt: "ਇੱਕ ਸ਼ੱਕ ਪੁੱਛੋ",
+            type_your_question: "ਆਪਣਾ ਸਵਾਲ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...", submit_doubt: "ਸ਼ੱਕ ਦਰਜ ਕਰੋ", mark_as_complete: "ਪੂਰਾ ਹੋਣ ਵਜੋਂ ਮਾਰਕ ਕਰੋ",
+            module: "ਮੋਡੀਊਲ", status: "ਸਥਿਤੀ", completed_on: "ਨੂੰ ਪੂਰਾ ਹੋਇਆ", completed: "ਪੂਰਾ ਹੋਇਆ", not_started: "ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਇਆ",
+            type_message_here: "ਆਪਣਾ ਸੁਨੇਹਾ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...", paste_gmeet_link: "ਇੱਥੇ ਇੱਕ ਗੂਗਲ ਮੀਟ ਲਿੰਕ ਪੇਸਟ ਕਰੋ...",
+            progress_details: "ਤਰੱਕੀ ਦੇ ਵੇਰਵੇ", quiz_score: "ਕੁਇਜ਼ ਸਕੋਰ",
+            doubt_answered: "ਤੁਹਾਡੇ ਸ਼ੱਕ ਦਾ ਜਵਾਬ ਦਿੱਤਾ ਗਿਆ ਹੈ!", your_doubt: "ਤੁਹਾਡਾ ਸ਼ੱਕ:", teacher_response: "ਅਧਿਆਪਕ ਦਾ ਜਵਾਬ:",
+        }
+    };
+    let currentLanguage = 'en';
+
+    window.changeLanguage = (lang) => {
+        currentLanguage = lang;
+        const elements = document.querySelectorAll('[data-translate-key]');
+        elements.forEach(el => {
+            const key = el.getAttribute('data-translate-key');
+            if (translations[lang] && translations[lang][key]) {
+                el.innerText = translations[lang][key];
+            }
+        });
+        const placeholderElements = document.querySelectorAll('[placeholder-key]');
+        placeholderElements.forEach(el => {
+            const key = el.getAttribute('placeholder-key');
+            if (translations[lang] && translations[lang][key]) {
+                el.placeholder = translations[lang][key];
+            }
+        });
+    };
+
+    // --- UI & NAVIGATION --- //
+    const pages = document.querySelectorAll('.page');
+    const appHeader = document.getElementById('app-header');
+
+    function showPage(pageId) {
+        pages.forEach(page => page.classList.add('hidden'));
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            targetPage.classList.remove('hidden');
+        }
+        
+        if (pageId === 'login-page' || pageId === 'register-page' || pageId === 'landing-page') {
+            appHeader.classList.add('hidden');
+            document.getElementById('main-content').classList.remove('p-4', 'sm:p-6', 'md:p-8');
+
+        } else {
+            appHeader.classList.remove('hidden');
+            document.getElementById('main-content').classList.add('p-4', 'sm:p-6', 'md:p-8');
+        }
+    }
+
+    // --- AUTHENTICATION --- //
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const showRegisterLink = document.getElementById('show-register-link');
+    const showLoginLink = document.getElementById('show-login-link');
+    const registerRole = document.getElementById('register-role');
+    const parentOptions = document.getElementById('parent-options');
+    const childSelect = document.getElementById('child-select');
+    
+    document.getElementById('show-login-main-btn').addEventListener('click', () => showPage('login-page'));
+    document.getElementById('show-register-main-btn').addEventListener('click', () => {
+        populateChildDropdown();
+        showPage('register-page');
+    });
+
+    document.querySelectorAll('.back-to-landing').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('landing-page');
+        });
+    });
+
+    showRegisterLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        populateChildDropdown();
+        showPage('register-page');
+    });
+
+    showLoginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showPage('login-page');
+    });
+
+    registerRole.addEventListener('change', () => {
+        if (registerRole.value === 'parent') {
+            parentOptions.classList.remove('hidden');
+        } else {
+            parentOptions.classList.add('hidden');
+        }
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        
+        const user = db.users.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+            currentUser = user;
+            loginUser();
+        } else {
+            showNotification('Invalid email or password', 'error');
+        }
+    });
+
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const role = document.getElementById('register-role').value;
+        const childId = role === 'parent' ? parseInt(childSelect.value) : null;
+        
+        if (db.users.some(u => u.email === email)) {
+            showNotification('User with this email already exists', 'error');
+            return;
+        }
+
+        const newUser = {
+            id: Date.now(),
+            name,
+            email,
+            password,
+            role,
+            childId
+        };
+        db.users.push(newUser);
+        saveDB();
+        
+        currentUser = newUser;
+        loginUser();
+    });
+    
+    document.getElementById('logout-button').addEventListener('click', () => {
+        currentUser = null;
+        showPage('landing-page');
+        document.getElementById('user-name').textContent = '';
+    });
+    
+    function loginUser() {
+        document.getElementById('user-name').textContent = currentUser.name;
+        switch (currentUser.role) {
+            case 'teacher':
+                renderTeacherDashboard();
+                showPage('teacher-dashboard');
+                break;
+            case 'student':
+                renderStudentDashboard();
+                showPage('student-dashboard');
+                break;
+            case 'parent':
+                renderParentDashboard();
+                showPage('parent-dashboard');
+                break;
+        }
+        changeLanguage(currentLanguage); // Re-apply translation after dashboard render
+    }
+
+    function populateChildDropdown() {
+        childSelect.innerHTML = '';
+        db.users.filter(u => u.role === 'student').forEach(student => {
+            const option = document.createElement('option');
+            option.value = student.id;
+            option.textContent = student.name;
+            childSelect.appendChild(option);
+        });
+    }
+
+    // --- TEACHER DASHBOARD --- //
+    const teacherNavLinks = document.querySelectorAll('.teacher-nav-link');
+    const teacherViews = document.querySelectorAll('.teacher-view');
+    
+    teacherNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            teacherNavLinks.forEach(l => l.classList.remove('active-nav', 'bg-blue-100', 'text-blue-700', 'font-semibold'));
+            link.classList.add('active-nav', 'bg-blue-100', 'text-blue-700', 'font-semibold');
+            
+            const targetId = link.getAttribute('data-target');
+            teacherViews.forEach(view => view.classList.add('hidden'));
+            document.getElementById(targetId).classList.remove('hidden');
+        });
+    });
+
+    function renderTeacherDashboard() {
+        renderStudentProgressList();
+        renderModuleListForTeacher();
+        populateParentDropdown();
+        renderDoubtsList();
+        
+        // Default to progress view
+        document.querySelector('.teacher-nav-link[data-target="teacher-progress"]').click();
+    }
+
+    function renderStudentProgressList() {
+        const listEl = document.getElementById('student-progress-list');
+        listEl.innerHTML = '';
+        const students = db.users.filter(u => u.role === 'student');
+        if (students.length === 0) {
+            listEl.innerHTML = '<p class="text-slate-500">No students registered yet.</p>';
+            return;
+        }
+        students.forEach(student => {
+            const studentProgress = db.progress.filter(p => p.studentId === student.id);
+            const totalModules = db.modules.length;
+            const completedCount = studentProgress.length;
+            const percentage = totalModules > 0 ? (completedCount / totalModules) * 100 : 0;
+
+            const studentCard = document.createElement('div');
+            studentCard.className = 'p-4 border rounded-lg hover:shadow-md transition';
+            studentCard.innerHTML = `
+                <details>
+                    <summary class="flex justify-between items-center cursor-pointer">
+                        <div>
+                            <p class="font-bold">${student.name}</p>
+                            <p class="text-sm text-slate-500">${student.email}</p>
+                        </div>
+                        <div class="text-right">
+                             <p class="font-semibold text-blue-600">${completedCount} / ${totalModules} Modules</p>
+                             <div class="w-32 bg-slate-200 rounded-full h-2.5 mt-1">
+                                <div class="bg-green-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                             </div>
+                        </div>
+                    </summary>
+                    <div class="mt-4 pt-4 border-t">
+                        <h4 class="font-semibold mb-2" data-translate-key="progress_details">Progress Details</h4>
+                        ${getStudentModuleDetailsHTML(student.id)}
+                    </div>
+                </details>
+            `;
+            listEl.appendChild(studentCard);
+        });
+    }
+
+    function getStudentModuleDetailsHTML(studentId) {
+        if (db.modules.length === 0) return '<p class="text-slate-500 text-sm">No modules available.</p>';
+        return db.modules.map(module => {
+            const progress = db.progress.find(p => p.studentId === studentId && p.moduleId === module.id);
+            const deadline = new Date(module.deadline);
+            const completedDate = progress ? new Date(progress.completedAt) : null;
+            const onTime = progress && completedDate <= deadline;
+            
+            const statusClass = progress ? (onTime ? 'text-green-600' : 'text-orange-500') : 'text-red-600';
+            const statusText = progress 
+                ? `${translations[currentLanguage].completed} ${onTime ? '(On Time)' : '(Late)'}` 
+                : translations[currentLanguage].not_started;
+            const scoreText = progress && progress.score !== null ? `<span class='font-medium text-slate-800' data-translate-key='quiz_score'>Quiz Score</span>: ${progress.score}` : '';
+
+            return `
+                <div class="flex justify-between items-center p-2 border-b">
+                    <span>${module.title}</span>
+                    <div class="text-right text-sm">
+                        <span class="${statusClass} font-semibold">${statusText}</span>
+                        ${scoreText ? `<br>${scoreText}` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderModuleListForTeacher() {
+        const listEl = document.getElementById('module-list');
+        listEl.innerHTML = '';
+        if (db.modules.length === 0) {
+            listEl.innerHTML = '<p class="text-slate-500 text-center py-4">No modules created yet. Click "Add Module" to start.</p>';
+            return;
+        }
+        db.modules.forEach(module => {
+            const moduleCard = document.createElement('div');
+            moduleCard.className = 'p-4 border rounded-lg flex justify-between items-center';
+            moduleCard.innerHTML = `
+                <div>
+                    <h4 class="font-bold">${module.title}</h4>
+                    <p class="text-sm text-slate-500">${module.category} | Deadline: ${module.deadline || 'N/A'}</p>
+                </div>
+                <div class="space-x-2">
+                    <button class="edit-module-btn text-blue-600 hover:text-blue-800" data-id="${module.id}"><i class="fas fa-edit"></i></button>
+                    <button class="delete-module-btn text-red-500 hover:text-red-700" data-id="${module.id}"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            listEl.appendChild(moduleCard);
+        });
+        
+        // Add event listeners
+        document.querySelectorAll('.edit-module-btn').forEach(btn => btn.addEventListener('click', handleEditModule));
+        document.querySelectorAll('.delete-module-btn').forEach(btn => btn.addEventListener('click', handleDeleteModule));
+    }
+    
+    function populateParentDropdown() {
+        const selectEl = document.getElementById('parent-select');
+        selectEl.innerHTML = '';
+        db.users.filter(u => u.role === 'parent').forEach(parent => {
+            const option = document.createElement('option');
+            option.value = parent.id;
+            option.textContent = parent.name;
+            selectEl.appendChild(option);
+        });
+    }
+
+    document.getElementById('message-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const parentId = parseInt(document.getElementById('parent-select').value);
+        const content = document.getElementById('message-content').value;
+        const gmeet = document.getElementById('gmeet-link').value;
+
+        if (!content && !gmeet) {
+            showNotification('Message or G-Meet link cannot be empty.', 'error');
+            return;
+        }
+
+        db.messages.push({
+            teacherId: currentUser.id,
+            parentId,
+            content,
+            gmeet,
+            sentAt: new Date().toISOString()
+        });
+        saveDB();
+        showNotification('Message sent successfully!', 'success');
+        document.getElementById('message-form').reset();
+    });
+
+    function renderDoubtsList() {
+        const listEl = document.getElementById('doubts-list');
+        listEl.innerHTML = '';
+        const unansweredDoubts = db.doubts.filter(d => d.answer === null);
+        if (unansweredDoubts.length === 0) {
+            listEl.innerHTML = '<p class="text-slate-500">No unanswered doubts from students.</p>';
+            return;
+        }
+        unansweredDoubts.forEach(doubt => {
+            const student = db.users.find(u => u.id === doubt.studentId);
+            const module = db.modules.find(m => m.id === doubt.moduleId);
+            const doubtCard = document.createElement('div');
+            doubtCard.className = 'p-4 border rounded-lg';
+            doubtCard.innerHTML = `
+                <p class="text-sm text-slate-500">From: <span class="font-semibold">${student.name}</span> | Module: <span class="font-semibold">${module.title}</span></p>
+                <p class="my-2">${doubt.question}</p>
+                <form class="answer-form mt-2" data-doubt-id="${doubt.id}">
+                    <textarea class="w-full p-2 border rounded-lg" rows="2" placeholder="Type your answer here..." required></textarea>
+                    <button type="submit" class="mt-2 bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-600 text-sm">Submit Answer</button>
+                </form>
+            `;
+            listEl.appendChild(doubtCard);
+        });
+
+        document.querySelectorAll('.answer-form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const doubtId = parseInt(e.target.dataset.doubtId);
+                const answer = e.target.querySelector('textarea').value;
+                const doubt = db.doubts.find(d => d.id === doubtId);
+                if (doubt) {
+                    doubt.answer = answer;
+                    saveDB();
+                    showNotification('Answer submitted!', 'success');
+                    renderDoubtsList(); // Refresh
+                }
+            });
+        });
+    }
+
+
+    // --- MODULE MODAL & FORM --- //
+    const moduleModal = document.getElementById('module-modal');
+    const moduleForm = document.getElementById('module-form');
+
+    document.getElementById('add-module-btn').addEventListener('click', () => {
+        moduleForm.reset();
+        document.getElementById('module-id').value = '';
+        document.getElementById('modal-title').innerText = translations[currentLanguage].add_new_module;
+        document.getElementById('questions-container').innerHTML = '';
+        moduleModal.classList.remove('hidden');
+    });
+
+    document.getElementById('cancel-module-btn').addEventListener('click', () => {
+        moduleModal.classList.add('hidden');
+    });
+
+    moduleForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('module-id').value;
+        const quizQuestions = [];
+        document.querySelectorAll('.question-block').forEach(qBlock => {
+            const question = qBlock.querySelector('input[placeholder="Question"]').value;
+            const options = Array.from(qBlock.querySelectorAll('input[placeholder^="Option"]')).map(opt => opt.value);
+            const correctAnswer = qBlock.querySelector('input[placeholder="Correct Answer"]').value;
+            if (question && options.length > 1 && correctAnswer) {
+                quizQuestions.push({ question, options, correctAnswer });
+            }
+        });
+
+        const moduleData = {
+            id: id ? parseInt(id) : Date.now(),
+            title: document.getElementById('module-title').value,
+            category: document.getElementById('module-category').value,
+            contentText: document.getElementById('module-content-text').value,
+            videoUrl: document.getElementById('module-video').value,
+            timer: parseInt(document.getElementById('module-timer').value),
+            deadline: document.getElementById('module-deadline').value,
+            quiz: quizQuestions,
+        };
+
+        if (id) { // Editing existing
+            const index = db.modules.findIndex(m => m.id === moduleData.id);
+            db.modules[index] = moduleData;
+        } else { // Adding new
+            db.modules.push(moduleData);
+        }
+        
+        saveDB();
+        renderModuleListForTeacher();
+        moduleModal.classList.add('hidden');
+        showNotification(id ? 'Module updated!' : 'Module added!', 'success');
+    });
+
+    function handleEditModule(e) {
+        const id = parseInt(e.currentTarget.dataset.id);
+        const module = db.modules.find(m => m.id === id);
+        
+        document.getElementById('module-id').value = module.id;
+        document.getElementById('module-title').value = module.title;
+        document.getElementById('module-category').value = module.category;
+        document.getElementById('module-content-text').value = module.contentText;
+        document.getElementById('module-video').value = module.videoUrl;
+        document.getElementById('module-timer').value = module.timer;
+        document.getElementById('module-deadline').value = module.deadline;
+        
+        const questionsContainer = document.getElementById('questions-container');
+        questionsContainer.innerHTML = '';
+        module.quiz.forEach(q => addQuestionToForm(q.question, q.options, q.correctAnswer));
+
+        document.getElementById('modal-title').innerText = `Edit Module: ${module.title}`;
+        moduleModal.classList.remove('hidden');
+    }
+    
+    function handleDeleteModule(e) {
+        const id = parseInt(e.currentTarget.dataset.id);
+        if (confirm('Are you sure you want to delete this module?')) {
+            db.modules = db.modules.filter(m => m.id !== id);
+            saveDB();
+            renderModuleListForTeacher();
+            showNotification('Module deleted', 'success');
+        }
+    }
+
+    document.getElementById('add-question-btn').addEventListener('click', () => addQuestionToForm());
+    
+    function addQuestionToForm(question = '', options = ['', ''], correctAnswer = '') {
+        const container = document.getElementById('questions-container');
+        const questionBlock = document.createElement('div');
+        questionBlock.className = 'question-block border p-3 rounded-lg bg-slate-50';
+        questionBlock.innerHTML = `
+            <input type="text" class="w-full p-2 border rounded-md mb-2" placeholder="Question" value="${question}" required>
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" class="w-full p-2 border rounded-md" placeholder="Option 1" value="${options[0] || ''}" required>
+                <input type="text" class="w-full p-2 border rounded-md" placeholder="Option 2" value="${options[1] || ''}" required>
+                <input type="text" class="w-full p-2 border rounded-md" placeholder="Option 3" value="${options[2] || ''}">
+                <input type="text" class="w-full p-2 border rounded-md" placeholder="Option 4" value="${options[3] || ''}">
+            </div>
+            <input type="text" class="w-full p-2 border rounded-md mt-2" placeholder="Correct Answer (must match an option exactly)" value="${correctAnswer}" required>
+        `;
+        container.appendChild(questionBlock);
+    }
+
+    // --- STUDENT DASHBOARD & TASK VIEW --- //
+    
+    function renderStudentDashboard() {
+        const listEl = document.getElementById('student-module-list');
+        listEl.innerHTML = '';
+        if (db.modules.length === 0) {
+            listEl.innerHTML = '<p class="col-span-full text-center text-slate-500">No courses are available right now. Check back later!</p>';
+            return;
+        }
+        db.modules.forEach(module => {
+            const isCompleted = db.progress.some(p => p.studentId === currentUser.id && p.moduleId === module.id);
+            const card = document.createElement('div');
+            card.className = `bg-white p-6 rounded-xl shadow-md cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all ${isCompleted ? 'border-l-4 border-green-500' : 'border-l-4 border-blue-500'}`;
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-semibold text-blue-600">${module.category}</p>
+                        <h3 class="text-xl font-bold mt-1">${module.title}</h3>
+                    </div>
+                    ${isCompleted ? '<i class="fas fa-check-circle text-green-500 text-2xl"></i>' : '<i class="far fa-circle text-slate-400 text-2xl"></i>'}
+                </div>
+                <p class="text-slate-600 mt-2 text-sm">${module.contentText.substring(0, 100)}...</p>
+                <button class="start-task-btn mt-4 w-full text-center bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700" data-module-id="${module.id}" data-translate-key="start_task">Start Task</button>
+            `;
+            listEl.appendChild(card);
+        });
+        document.querySelectorAll('.start-task-btn').forEach(btn => btn.addEventListener('click', viewTask));
+    }
+
+    function viewTask(e) {
+        const moduleId = parseInt(e.target.dataset.moduleId);
+        const module = db.modules.find(m => m.id === moduleId);
+        const taskContentEl = document.getElementById('task-content');
+        
+        const isCompleted = db.progress.some(p => p.studentId === currentUser.id && p.moduleId === module.id);
+        const doubt = db.doubts.find(d => d.studentId === currentUser.id && d.moduleId === module.id);
+
+        let doubtHtml = '';
+        if (doubt) {
+            doubtHtml = `
+                <div class="mt-8 p-4 rounded-lg ${doubt.answer ? 'bg-green-50' : 'bg-yellow-50'}">
+                    <h4 class="font-semibold" data-translate-key="your_doubt">Your Doubt:</h4>
+                    <p class="italic">"${doubt.question}"</p>
+                    ${doubt.answer ? `<h4 class="font-semibold mt-3" data-translate-key="teacher_response">Teacher's Response:</h4><p>${doubt.answer}</p>` : `<p class="text-sm mt-2 text-yellow-700">Waiting for teacher's response.</p>`}
+                </div>`;
+        } else {
+            doubtHtml = `
+                 <div class="mt-8">
+                    <h3 class="text-xl font-semibold mb-2" data-translate-key="ask_a_doubt">Ask a Doubt</h3>
+                    <form id="doubt-form" data-module-id="${module.id}">
+                        <textarea id="doubt-question" class="w-full p-2 border rounded-lg" rows="3" placeholder-key="type_your_question" required></textarea>
+                        <button type="submit" class="mt-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600" data-translate-key="submit_doubt">Submit Doubt</button>
+                    </form>
+                </div>`;
+        }
+
+        let quizHtml = '';
+        if (module.quiz && module.quiz.length > 0) {
+            quizHtml += `<div class="mt-8"><h3 class="text-xl font-semibold mb-4 border-t pt-4" data-translate-key="quiz_section">Quiz Section</h3><form id="quiz-form">`;
+            module.quiz.forEach((q, index) => {
+                quizHtml += `
+                    <div class="mb-4">
+                        <p class="font-semibold">${index + 1}. ${q.question}</p>
+                        <div class="mt-2 space-y-1">
+                            ${q.options.map(opt => `
+                                <label class="block"><input type="radio" name="question-${index}" value="${opt}" class="mr-2">${opt}</label>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            });
+            quizHtml += `</form></div>`;
+        }
+        
+        taskContentEl.innerHTML = `
+            <h2 class="text-3xl font-bold">${module.title}</h2>
+            <p class="text-slate-500 mb-6">${module.category}</p>
+            <p class="mb-6 leading-relaxed">${module.contentText}</p>
+            
+            ${module.videoUrl ? `
+            <div class="aspect-w-16 aspect-h-9 mb-6 rounded-lg overflow-hidden">
+                <iframe src="${module.videoUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>` : ''}
+
+            ${quizHtml}
+
+            <div class="mt-8 p-4 bg-slate-100 rounded-lg text-center">
+                ${isCompleted 
+                    ? `<p class="font-bold text-lg text-green-600" data-translate-key="task_completed"><i class="fas fa-check-circle mr-2"></i>Task Completed</p>` 
+                    : `<div id="timer-display" class="text-2xl font-bold text-blue-600 mb-2">${module.timer}s</div>
+                       <button id="complete-task-btn" data-module-id="${module.id}" disabled class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold disabled:bg-slate-400 disabled:cursor-not-allowed" data-translate-key="mark_as_complete">Mark as Complete</button>`
+                }
+            </div>
+            
+             <div class="mt-4 text-center">
+                <button id="download-btn" data-module-id="${module.id}" class="text-blue-600 hover:underline"><i class="fas fa-download mr-2"></i><span data-translate-key="download_module">Download Module</span></button>
+             </div>
+            ${doubtHtml}
+        `;
+        showPage('task-view-page');
+        changeLanguage(currentLanguage);
+
+        if (!isCompleted) {
+            startTimer(module.timer, module.id);
+        }
+
+        document.getElementById('back-to-dashboard-btn').addEventListener('click', () => {
+             clearInterval(taskTimerInterval);
+             renderStudentDashboard();
+             showPage('student-dashboard');
+        });
+        
+        if (document.getElementById('doubt-form')) {
+            document.getElementById('doubt-form').addEventListener('submit', handleDoubtSubmit);
+        }
+        if (document.getElementById('download-btn')) {
+            document.getElementById('download-btn').addEventListener('click', handleDownloadModule);
+        }
+    }
+    
+    function startTimer(duration, moduleId) {
+        let timer = duration;
+        const timerDisplay = document.getElementById('timer-display');
+        const completeBtn = document.getElementById('complete-task-btn');
+
+        if(taskTimerInterval) clearInterval(taskTimerInterval);
+
+        taskTimerInterval = setInterval(() => {
+            timer--;
+            timerDisplay.textContent = `${timer}s`;
+            if (timer <= 0) {
+                clearInterval(taskTimerInterval);
+                timerDisplay.textContent = "Time's up!";
+                completeBtn.disabled = false;
+                completeBtn.addEventListener('click', handleCompleteTask);
+            }
+        }, 1000);
+    }
+    
+    function handleCompleteTask(e) {
+        const moduleId = parseInt(e.target.dataset.moduleId);
+        const module = db.modules.find(m => m.id === moduleId);
+        let score = null;
+        
+        if (module.quiz && module.quiz.length > 0) {
+            const quizForm = document.getElementById('quiz-form');
+            let correctAnswers = 0;
+            module.quiz.forEach((q, index) => {
+                const selected = quizForm.querySelector(`input[name="question-${index}"]:checked`);
+                if (selected && selected.value === q.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            score = `${correctAnswers}/${module.quiz.length}`;
+        }
+
+        db.progress.push({
+            studentId: currentUser.id,
+            moduleId: moduleId,
+            completedAt: new Date().toISOString(),
+            score: score
+        });
+        saveDB();
+        showNotification('Congratulations! Task completed.', 'success');
+        
+        // Re-render task view to show completion status
+        const fakeEvent = { target: { dataset: { moduleId: moduleId } } };
+        viewTask(fakeEvent);
+    }
+
+    function handleDoubtSubmit(e) {
+        e.preventDefault();
+        const moduleId = parseInt(e.target.dataset.moduleId);
+        const question = document.getElementById('doubt-question').value;
+        db.doubts.push({
+            id: Date.now(),
+            studentId: currentUser.id,
+            moduleId,
+            question,
+            answer: null,
+            askedAt: new Date().toISOString()
+        });
+        saveDB();
+        showNotification('Your doubt has been submitted!', 'success');
+        // Re-render task view to show submitted doubt
+        const fakeEvent = { target: { dataset: { moduleId: moduleId } } };
+        viewTask(fakeEvent);
+    }
+
+    function handleDownloadModule(e) {
+        const moduleId = parseInt(e.target.dataset.moduleId);
+        const module = db.modules.find(m => m.id === moduleId);
+        
+        // Simulate offline download by creating a JSON file
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(module, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `${module.title.replace(/\s/g, '_')}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        showNotification('Module JSON is downloading for offline access.', 'success');
+    }
+
+    // --- PARENT DASHBOARD --- //
+    
+    function renderParentDashboard() {
+        const child = db.users.find(u => u.id === currentUser.childId);
+        if (!child) {
+            // Handle case where child is not found
+            document.getElementById('parent-dashboard').innerHTML = '<p>Error: Child data not found.</p>';
+            return;
+        }
+
+        document.getElementById('child-name-display').textContent = child.name;
+        
+        // Render Progress
+        const progressSummaryEl = document.getElementById('parent-progress-summary');
+        const childProgress = db.progress.filter(p => p.studentId === child.id);
+        const totalModules = db.modules.length;
+        
+        progressSummaryEl.innerHTML = `<p>${childProgress.length} of ${totalModules} modules completed.</p>`;
+        
+        const detailsList = document.createElement('ul');
+        detailsList.className = 'mt-4 space-y-2 list-disc list-inside';
+        db.modules.forEach(module => {
+            const progress = childProgress.find(p => p.moduleId === module.id);
+            const li = document.createElement('li');
+            li.className = progress ? 'text-green-700' : 'text-slate-500';
+            const completedDate = progress ? new Date(progress.completedAt).toLocaleDateString() : '';
+            li.innerHTML = `
+                <span class="font-semibold">${module.title}</span> - 
+                <span data-translate-key="status">Status</span>: ${progress ? `<span data-translate-key="completed">Completed</span> (<span data-translate-key="completed_on">Completed On</span>: ${completedDate})` : '<span data-translate-key="not_started">Not Started</span>'}
+            `;
+            detailsList.appendChild(li);
+        });
+        progressSummaryEl.appendChild(detailsList);
+        
+        // Render Messages
+        const messageListEl = document.getElementById('parent-message-list');
+        messageListEl.innerHTML = '';
+        const messages = db.messages.filter(m => m.parentId === currentUser.id).sort((a,b) => new Date(b.sentAt) - new Date(a.sentAt));
+        if (messages.length === 0) {
+            messageListEl.innerHTML = '<p class="text-slate-500">No messages from the teacher.</p>';
+            return;
+        }
+        messages.forEach(msg => {
+            const teacher = db.users.find(u => u.id === msg.teacherId);
+            const messageCard = document.createElement('div');
+            messageCard.className = 'p-4 bg-blue-50 rounded-lg border border-blue-200';
+            messageCard.innerHTML = `
+                <p class="text-sm text-slate-600">From: <span class="font-semibold">${teacher.name}</span> | On: ${new Date(msg.sentAt).toLocaleString()}</p>
+                <p class="mt-2">${msg.content}</p>
+                ${msg.gmeet ? `<a href="${msg.gmeet}" target="_blank" class="inline-block mt-2 bg-blue-500 text-white text-sm px-3 py-1 rounded-md hover:bg-blue-600">Join Google Meet</a>` : ''}
+            `;
+            messageListEl.appendChild(messageCard);
+        });
+    }
+
+    // --- UTILITIES --- //
+    
+    function showNotification(message, type = 'success') {
+        const alertModal = document.getElementById('alert-modal');
+        const alertMessage = document.getElementById('alert-message');
+        
+        alertMessage.textContent = message;
+        alertModal.className = `fixed top-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg transition-transform duration-500 z-50 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+        
+        // Show
+        alertModal.classList.remove('hidden');
+        setTimeout(() => alertModal.classList.remove('translate-x-full'), 10);
+        
+        // Hide
+        setTimeout(() => {
+            alertModal.classList.add('translate-x-full');
+            setTimeout(() => alertModal.classList.add('hidden'), 500);
+        }, 3000);
+    }
+
+    // --- INITIALIZATION --- //
+    initializeDB();
+    showPage('landing-page');
+});
+</script>
+
+</body>
+</html>
+
